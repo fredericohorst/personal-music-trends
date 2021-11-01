@@ -35,7 +35,7 @@ def variables(extended, initial_date, end_date):
 def lastfm_recent_tracks(request_url):
     """
     Requests the data from LastFM API.
-    # docs: https://www.last.fm/api/show/user.getRecentTracks
+    docs: https://www.last.fm/api/show/user.getRecentTracks
     """
     partial_data = requests.get(request_url)
     partial_data_json = partial_data.json()
@@ -82,6 +82,7 @@ def saving_lastfm_data(data, file_path):
             for track in item.get('track'):
                 lastfm_dict = {}
                 if isinstance(track.get('artist'), dict): lastfm_dict['artist_name'] = track.get('artist').get('name')
+                if isinstance(track.get('album'), dict): lastfm_dict['album_name'] = track.get('album').get('#text')
                 if isinstance(track.get('date'), dict): lastfm_dict['date_uts'] = track.get('date').get('uts')
                 if isinstance(track.get('date'), dict): lastfm_dict['date'] = datetime.fromtimestamp(int(track.get('date').get('uts')))
                 lastfm_dict['track_name'] = track.get('name')
