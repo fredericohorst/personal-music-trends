@@ -5,19 +5,12 @@ import json
 from requests.sessions import requote_uri
 # http://ws.audioscrobbler.com/2.0/?method=user.getrecenttracks&user=rj&api_key=YOUR_API_KEY&format=json
 
-
-
-
-# get recent tracks method:
-
-#TODO:
 def lastfm_auth():
     with open('credentials.json', 'r') as credentials:
         c = json.load(credentials)
         api_key = c['API-key']
     auth_link = 'http://www.last.fm/api/auth/?api_key=' + api_key
     return auth_link
-
 
 def variables(extended, initial_date, end_date):
     """
@@ -38,7 +31,6 @@ def variables(extended, initial_date, end_date):
     # request_link = lastfm_api_url + '&user=' + user \
     #     + 'format=json' + '&extended=' + param_extended + '&from=' + param_from + '&to=' + param_to
     return request_link
-
 
 def lastfm_recent_tracks(request_url):
     """
@@ -76,6 +68,11 @@ def lastfm_last12mos_tracks():
     return lastfm_data
 
 def saving_lastfm_data(data, file_path):
+    """
+    Cleans the json data from LastFM API.
+    Saves file into file_path.
+    Returns a dataframe to be used.
+    """
     import pandas
     from datetime import date, datetime
     lastfm_list = []
@@ -94,12 +91,26 @@ def saving_lastfm_data(data, file_path):
     lastfm_df.to_csv(file_path)
     return lastfm_df
 
+def import_historic_data(file_path, initial_year, end_year):
+    """
+    Imports all data iterating by every year from the 
+    initial_year to the end_year.
+    Saves files into file_path + year in CSV format.
+    """
+    # import lastfm
+    from datetime import date, datetime
+    import time
+    for year in range(initial_year, end_year+1):
+        # compose variables:
+        begin = date(year,1,1)
+        begin = int(time.mktime(begin.timetuple()))
+        end = date(year,12,31)
+        end = int(time.mktime(end.timetuple()))
+        request_link = variables(extended='1', initial_date=begin, end_date=end)
+        # requesting data:
+        data = lastfm_recent_tracks(request_url = request_link)
+        file = file_path + str(year) + '.csv'
+        lastfm_df = saving_lastfm_data(data=data, file_path=file)
+        print('saved', file)
+    return "files saved correctly at " + file_path
 
-
-# historical data`
-
-# https://blockgeni.com/guide-to-get-music-data-with-the-last-fm-api-using-python/
-
-
-
-# http://millionsongdataset.com/lastfm/
