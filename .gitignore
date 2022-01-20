@@ -131,3 +131,4 @@ dmypy.json
 # user defined:
 credentials.json
 *.csv
+.DS_Store
