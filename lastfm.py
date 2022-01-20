@@ -1,5 +1,4 @@
 import requests
-import datetime
 import json
 
 from requests.sessions import requote_uri
@@ -99,8 +98,12 @@ def import_historic_data(file_path, initial_year, end_year):
     Saves files into file_path + year in CSV format.
     """
     # import lastfm
+    import os
     from datetime import date, datetime
     import time
+    if os.path.exists('credentials.json') == False:
+        m = "Missing LastFM credentials file. For more details, look the README file."
+        return m
     for year in range(initial_year, end_year+1):
         # compose variables:
         begin = date(year,1,1)
